@@ -1,15 +1,17 @@
-const cookieParser = require("cookie-parser")
-const express = require("express")
-const { add, find, userData, findByName } = require("./module/user")
-const cors = require("cors")
-const session = require("express-session")
-const userRoute = require("./routes/user")
+import cookieParser from "cookie-parser"
+import cors from "cors"
+import express from "express"
+import session from "express-session"
+import userRoute from "./routes/user"
+import { config } from "dotenv"
 const main = () => {
   const app = express()
+  config()
   app.use(express.json())
+
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: ["http://localhost:3000", "http://localhost:3001"],
       methods: ["GET", "POST"],
       credentials: true,
     })
@@ -20,7 +22,7 @@ const main = () => {
     session({
       name: "qid",
       cookie: {
-        expires: 60 * 60 * 24,
+        maxAge: 60 * 60 * 24,
       },
       secret: "soemtiosdfads",
       saveUninitialized: false,

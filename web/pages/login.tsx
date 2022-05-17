@@ -1,14 +1,15 @@
 import { NextPage } from 'next'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Axios from 'axios'
+import { useRouter } from 'next/router'
 Axios.defaults.withCredentials = true
 const Login: NextPage = () => {
   const [name, setName] = useState('')
   const [pass, setPass] = useState('')
+  const router = useRouter()
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <h1>login form</h1>
+    <div className="flex  flex-col items-center justify-center py-2">
       <main className="flex">
         <form
           className="w-full max-w-sm"
@@ -17,10 +18,14 @@ const Login: NextPage = () => {
             Axios.post('http://localhost:4000/api/user/login', {
               name,
               pass,
-            }).then((res) => {
+            }).then(({ data }) => {
+              if (data.err) {
+                console.log(data.err)
+                return
+              }
               console.log('after register')
-
-              console.log(res.data)
+              router.push('/home')
+              console.log(data)
             })
           }}
         >
@@ -74,10 +79,10 @@ const Login: NextPage = () => {
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="focus:shadow-outline rounded bg-purple-500 py-2 px-4 font-bold text-white shadow hover:bg-purple-400 focus:outline-none"
+                className="focus:shadow-outline rounded bg-indigo-700 py-2 px-4 font-bold text-white shadow hover:bg-purple-400 focus:outline-none"
                 type="submit"
               >
-                Sign Up
+                Log In
               </button>
             </div>
           </div>

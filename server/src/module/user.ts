@@ -1,7 +1,7 @@
-const uuid = require("uuid")
+import * as uuid from "uuid"
 const userData = new Array()
 
-function add(data) {
+function add(data: any) {
   if (
     userData.find((user) => {
       console.log(user)
@@ -17,21 +17,16 @@ function add(data) {
 }
 add({
   id: uuid.v4(),
-  name: "bob",
-  pass: "bob",
+  name: "vishnu@gmail.com",
+  pass: "1234",
 })
 
-function find(id) {
+function find(id: any) {
   return userData.find((user) => user.id === id)
 }
-function findByName(name) {
+function findByName(name: String) {
   return userData.find((user) => user.name === name)
 }
 console.log(find("vishnu"))
 console.log(userData)
-module.exports = {
-  add,
-  find,
-  userData,
-  findByName,
-}
+export default { add, find, userData, findByName }

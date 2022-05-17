@@ -1,27 +1,27 @@
-const { userData, add, find, findByName } = require("../module/user")
+import userOptions from "../module/user"
 
-const route = require("express").Router()
-
+import { Router } from "express"
+const route = Router()
 route.get("/", (_, res) => {
-  return res.json(userData)
+  return res.json(userOptions.userData)
 })
 
 route.post("/reg", (req, res) => {
   console.log("req ", req.body)
 
-  const id = add(req.body)
-  const user = find(id)
+  const id = userOptions.add(req.body)
+  const user = userOptions.find(id)
   console.log("user after afddign ->", user)
-  const resDdata = user ? user : { err: "no user found" }
+  const resDdata = user ? { user } : { err: "no user found" }
   res.send(resDdata)
 })
 
-route.post("/login", (req, res) => {
+route.post("/login", (req: any, res) => {
   console.log(req.body)
   if (!req.body.name) {
     res.status(300).send({ err: "tyep the duckign mmae" })
   }
-  const user = findByName(req.body.name)
+  const user = userOptions.findByName(req.body.name)
 
   console.log("user after login ->", user)
 
@@ -30,18 +30,18 @@ route.post("/login", (req, res) => {
   }
   req.session.qid = user.id
   console.log("session ", req.session.qid)
-  res.send(user)
+  res.send({ user })
 })
-route.get("/me", (req, res) => {
+route.get("/me", (req: any, res) => {
   // if (req.session.qid) {
   //   res.send(find(req.session.qid))
   //   res.end()
   // }
-  res.json(find(req.session.qid))
+  res.json(userOptions.find(req.session.qid))
 })
 
-route.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
+route.get("/logout", (req: any, res: any) => {
+  req.session.destroy((err: any) => {
     if (err) {
       console.log(err)
       res.send(false)
@@ -51,4 +51,4 @@ route.get("/logout", (req, res) => {
     res.send(true)
   })
 })
-module.exports = route
+export default route
