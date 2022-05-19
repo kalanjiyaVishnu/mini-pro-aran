@@ -7,14 +7,22 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
-const user_1 = __importDefault(require("./routes/user"));
+const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const dotenv_1 = require("dotenv");
-const main = () => {
+const mongoose_1 = require("mongoose");
+const main = async () => {
     const app = (0, express_1.default)();
+    try {
+        await (0, mongoose_1.connect)("mongodb://localhost:27017/test");
+    }
+    catch (err) {
+        console.log("Connection error->", err);
+        return;
+    }
     (0, dotenv_1.config)();
     app.use(express_1.default.json());
     app.use((0, cors_1.default)({
-        origin: ["http://localhost:3000", "http://localhost:3001"],
+        origin: ["http://localhost:3000"],
         methods: ["GET", "POST"],
         credentials: true,
     }));
@@ -28,7 +36,7 @@ const main = () => {
         saveUninitialized: false,
         resave: false,
     }));
-    app.use("/api/user", user_1.default);
+    app.use("/api/user", userRoute_1.default);
     app.get("/bob", (req, res) => {
         console.log(req.session);
         res.send("bob");

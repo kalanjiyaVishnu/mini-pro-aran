@@ -1,13 +1,17 @@
 import { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 const Register: NextPage = () => {
   const [name, setName] = useState('')
   const [pass, setPass] = useState('')
+  const [err, setErr] = useState('')
+
   useEffect(() => {
     // axios.get('http://localhost:4000/bob').then((res) => console.log(res.data))
   }, [])
 
+  const router = useRouter()
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <main className="flex">
@@ -15,12 +19,14 @@ const Register: NextPage = () => {
           className="w-full max-w-sm"
           onSubmit={(e) => {
             e.preventDefault()
-
             axios
               .post('http://localhost:4000/api/user/reg', { name, pass })
               .then((res) => {
                 console.log('after register')
-
+                if (!res.data.user) {
+                  setErr('Account exits')
+                }
+                router.push('/login')
                 console.log(res.data)
               })
             console.log(name, pass)
@@ -65,18 +71,19 @@ const Register: NextPage = () => {
               />
             </div>
           </div>
-          <div className="mb-6 md:flex md:items-center">
-            <div className="md:w-1/3"></div>
-            <label className="block font-bold text-gray-500 md:w-2/3">
-              <input className="mr-2 leading-tight" type="checkbox" />
-              <span className="text-sm">Send me your newsletter!</span>
-            </label>
-          </div>
+          {err && (
+            <div className="mb-6 md:flex md:items-center">
+              <div className="md:w-1/3"></div>
+              <label className="block font-bold text-gray-500 md:w-2/3">
+                <span className="text-sm">{err}</span>
+              </label>
+            </div>
+          )}
           <div className="md:flex md:items-center">
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="focus:shadow-outline rounded bg-indigo-700 py-2 px-4 font-bold text-white shadow hover:bg-purple-400 focus:outline-none"
+                className="focus:shadow-outline 0 transform rounded bg-indigo-700 bg-opacity-60 py-2 px-4 font-bold text-white shadow transition-all duration-150 hover:bg-opacity-100 focus:outline-none"
                 type="submit"
               >
                 Sign Up

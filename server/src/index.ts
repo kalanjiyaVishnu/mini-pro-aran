@@ -2,16 +2,26 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 import express from "express"
 import session from "express-session"
-import userRoute from "./routes/user"
+import userRoute from "./routes/userRoute"
 import { config } from "dotenv"
-const main = () => {
+import { connect } from "mongoose"
+
+const main = async () => {
   const app = express()
+  try {
+    await connect("mongodb://localhost:27017/test")
+  } catch (err) {
+    console.log("Connection error->", err)
+    return
+  }
+
   config()
+
   app.use(express.json())
 
   app.use(
     cors({
-      origin: ["http://localhost:3000", "http://localhost:3001"],
+      origin: ["http://localhost:3000"],
       methods: ["GET", "POST"],
       credentials: true,
     })

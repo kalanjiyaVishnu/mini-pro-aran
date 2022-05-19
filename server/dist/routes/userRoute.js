@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const user_1 = __importDefault(require("../module/user"));
 const express_1 = require("express");
-const User_1 = __importDefault(require("src/entity/User"));
+const User_1 = __importDefault(require("../entity/User"));
 const route = (0, express_1.Router)();
 route.get("/", (_, res) => {
     return res.json(user_1.default.userData);
@@ -49,4 +49,4 @@ route.get("/logout", (req, res) => {
     });
 });
 exports.default = route;
-//# sourceMappingURL=user.js.map
+//# sourceMappingURL=userRoute.js.map

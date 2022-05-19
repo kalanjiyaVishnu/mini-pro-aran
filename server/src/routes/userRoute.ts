@@ -1,19 +1,27 @@
 import userOptions from "../module/user"
 
 import { Router } from "express"
+import User from "../entity/User"
 const route = Router()
 route.get("/", (_, res) => {
   return res.json(userOptions.userData)
 })
 
-route.post("/reg", (req, res) => {
+route.post("/reg", async (req, res) => {
   console.log("req ", req.body)
 
-  const id = userOptions.add(req.body)
-  const user = userOptions.find(id)
+  const user = new User({
+    nameOrEmail: "Bill",
+    pass: "billooo",
+    avatar: "https://i.imgur.com/dM7Thhn.png",
+  })
+  // await user.save()
+
+  // const id = userOptions.add(req.body)
+  // const user = userOptions.find(id)
   console.log("user after afddign ->", user)
   const resDdata = user ? { user } : { err: "no user found" }
-  res.send(resDdata)
+  res.send({ err: "sad" })
 })
 
 route.post("/login", (req: any, res) => {

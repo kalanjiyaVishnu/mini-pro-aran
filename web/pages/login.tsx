@@ -6,6 +6,7 @@ Axios.defaults.withCredentials = true
 const Login: NextPage = () => {
   const [name, setName] = useState('')
   const [pass, setPass] = useState('')
+  const [err, setErr] = useState(null)
   const router = useRouter()
 
   return (
@@ -20,7 +21,7 @@ const Login: NextPage = () => {
               pass,
             }).then(({ data }) => {
               if (data.err) {
-                console.log(data.err)
+                setErr(data.err)
                 return
               }
               console.log('after register')
@@ -30,7 +31,7 @@ const Login: NextPage = () => {
           }}
         >
           <div className="mb-6 md:flex md:items-center">
-            <div className="md:w-1/3">
+            <div className=" md:w-1/3">
               <label
                 className="mb-1 block pr-4 font-bold text-gray-500 md:mb-0 md:text-right"
                 htmlFor="inline-full-name"
@@ -38,14 +39,17 @@ const Login: NextPage = () => {
                 Full Name
               </label>
             </div>
-            <div className="md:w-2/3">
+            <div className="flex-row md:w-2/3">
               <input
-                className="w-full appearance-none rounded border-2 border-gray-200 bg-gray-200 py-2 px-4 leading-tight text-gray-700 focus:border-purple-500 focus:bg-white focus:outline-none"
-                id="inline-full-name"
+                className={`${
+                  err && 'border-red-400'
+                } w-full appearance-none rounded border-2 border-gray-200 bg-gray-200 py-2 px-4 leading-tight text-gray-700 focus:border-purple-500 focus:bg-white focus:outline-none`}
+                id="inline-full-name "
                 type="text"
                 value={name}
                 onChange={({ target: { value } }) => setName(value)}
               />
+              <span className="text-sm  text-red-500 opacity-50">{err}</span>
             </div>
           </div>
           <div className="mb-6 md:flex md:items-center">
@@ -79,7 +83,7 @@ const Login: NextPage = () => {
             <div className="md:w-1/3"></div>
             <div className="md:w-2/3">
               <button
-                className="focus:shadow-outline rounded bg-indigo-700 py-2 px-4 font-bold text-white shadow hover:bg-purple-400 focus:outline-none"
+                className="focus:shadow-outline 0 transform rounded bg-indigo-700 bg-opacity-60 py-2 px-4 font-bold text-white shadow transition-all duration-150 hover:bg-opacity-100 focus:outline-none"
                 type="submit"
               >
                 Log In

@@ -5,7 +5,7 @@ type propType = {
 }
 const Layout: React.FC<propType> = ({ children }) => {
   return (
-    <main className="bgq-[#121212]  h-screen py-8 font-body ">
+    <main className="bgq-[#121212x] h-screen bg-primary-bg-color py-8">
       <Nav />
       <div className="mx-auto flex  h-full w-screen max-w-[80%] flex-col items-center justify-center ">
         {children}
