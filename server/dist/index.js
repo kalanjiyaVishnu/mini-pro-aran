@@ -30,7 +30,7 @@ const main = async () => {
     app.use((0, express_session_1.default)({
         name: "qid",
         cookie: {
-            maxAge: 60 * 60 * 24,
+            maxAge: 1000 * 60 * 60 * 24,
         },
         secret: "soemtiosdfads",
         saveUninitialized: false,

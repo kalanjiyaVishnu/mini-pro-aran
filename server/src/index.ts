@@ -32,7 +32,7 @@ const main = async () => {
     session({
       name: "qid",
       cookie: {
-        maxAge: 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24,
       },
       secret: "soemtiosdfads",
       saveUninitialized: false,
