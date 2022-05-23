@@ -10,6 +10,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const dotenv_1 = require("dotenv");
 const mongoose_1 = require("mongoose");
+const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const main = async () => {
     const app = (0, express_1.default)();
     try {
@@ -37,6 +38,7 @@ const main = async () => {
         resave: false,
     }));
     app.use("/api/user", userRoute_1.default);
+    app.use("/api/products", productRoutes_1.default);
     app.get("/bob", (req, res) => {
         console.log(req.session);
         res.send("bob");

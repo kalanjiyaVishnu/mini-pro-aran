@@ -5,7 +5,7 @@ import session from "express-session"
 import userRoute from "./routes/userRoute"
 import { config } from "dotenv"
 import { connect } from "mongoose"
-
+import productRoute from "./routes/productRoutes"
 const main = async () => {
   const app = express()
   try {
@@ -40,6 +40,7 @@ const main = async () => {
     })
   )
   app.use("/api/user", userRoute)
+  app.use("/api/products", productRoute)
   app.get("/bob", (req, res) => {
     console.log(req.session)
     res.send("bob")

@@ -10,7 +10,7 @@ const Login: NextPage = () => {
   const router = useRouter()
 
   return (
-    <div className="flex  h-full flex-col items-center justify-center py-2">
+    <div className="flex  h-full   flex-col items-center justify-center py-2">
       <main className="flex">
         <form
           className="w-full max-w-sm"

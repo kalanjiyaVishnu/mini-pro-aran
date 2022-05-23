@@ -48,7 +48,5 @@ function find(id) {
 function findByName(name) {
     return userData.find((user) => user.name === name);
 }
-console.log(find("vishnu"));
-console.log(userData);
 exports.default = { add, find, userData, findByName };
 //# sourceMappingURL=user.js.map

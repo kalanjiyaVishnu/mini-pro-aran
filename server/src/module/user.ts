@@ -27,6 +27,6 @@ function find(id: any) {
 function findByName(name: String) {
   return userData.find((user) => user.name === name)
 }
-console.log(find("vishnu"))
-console.log(userData)
+// console.log(find("vishnu"))
+// console.log(userData)
 export default { add, find, userData, findByName }

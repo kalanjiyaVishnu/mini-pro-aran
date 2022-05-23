@@ -29,27 +29,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const argon = __importStar(require("argon2"));
 const express_1 = require("express");
 const User_1 = __importDefault(require("../entity/User"));
-const user_1 = __importDefault(require("../module/user"));
 const route = (0, express_1.Router)();
-route.get("/", (_, res) => {
-    return res.json(user_1.default.userData);
+route.get("/", async (_, res) => {
+    res.json(await User_1.default.find({}));
 });
+const validate = (nameOrEmail, pass) => {
+    if (!nameOrEmail) {
+        return { err: "enter a valid name or email" };
+    }
+    else if (!nameOrEmail.includes("@") && nameOrEmail.length < 3) {
+        return { err: "length should be greater" };
+    }
+    else if (nameOrEmail.includes("@") && nameOrEmail.length < 6) {
+        return { err: "Enter a valid email" };
+    }
+    else if (pass.length < 3) {
+        return { err: "pass length must be greater than 3" };
+    }
+    return null;
+};
 route.post("/reg", async (req, res) => {
-    console.log("req ", req.body);
     const options = req.body;
-    if (!options.nameOrEmail) {
-        res.send({ err: "enter a valid name or email" });
+    console.log(options);
+    const error = validate(options.nameOrEmail, options.pass);
+    console.log(error);
+    if (error) {
+        res.send({ err: error.err });
+        return;
     }
-    else if (!options.nameOrEmail.includes("@") &&
-        options.nameOrEmail.length < 3) {
-        res.send({ err: "length should be greater" });
-    }
-    else if (options.nameOrEmail.includes("@") &&
-        options.nameOrEmail.length < 6) {
-        res.send({ err: "Enter a valid email" });
-    }
-    else if (options.pass.length < 3) {
-        res.send({ err: "pass length must be greater than 3" });
+    const isUserExists = await User_1.default.find({ nameOrEmail: options.nameOrEmail });
+    console.log(isUserExists);
+    if (isUserExists.length > 0) {
+        res.send({ err: "user already exits" });
+        return;
     }
     options.pass = await argon.hash(options.pass);
     const user = new User_1.default(options);
@@ -58,57 +70,58 @@ route.post("/reg", async (req, res) => {
     }
     catch (err) {
         res.send({ err: "not stored in the db" });
+        res.end();
     }
     res.send({ user });
 });
 route.post("/login", async (req, res) => {
-    console.log("req ", req.body);
     const options = req.body;
-    if (!options.nameOrEmail) {
-        res.send({ err: "enter a valid name or email" });
-    }
-    else if (!options.nameOrEmail.includes("@") &&
-        options.nameOrEmail.length < 3) {
-        res.send({ err: "length should be greater" });
-    }
-    else if (options.nameOrEmail.includes("@") &&
-        options.nameOrEmail.length < 6) {
-        res.send({ err: "Enter a valid email" });
-    }
-    else if (options.pass.length < 3) {
-        res.send({ err: "pass length must be greater than 3" });
+    const error = validate(options.nameOrEmail, options.pass);
+    if (error) {
+        res.send({ err: error.err });
+        return;
     }
     const user = await User_1.default.findOne({ nameOrEmail: options.nameOrEmail });
-    console.log("user after login ->", user);
     if (!user) {
         res.send({ err: "no user found" });
+        return;
+    }
+    else if (!(await argon.verify(user.pass, options.pass))) {
+        res.send({ err: "password not match" });
+        return;
     }
     req.session.qid = user.id;
-    console.log("session ", req.session.qid);
     res.send({ user });
 });
 route.get("/me", async (req, res) => {
-    console.log("session", req.session.qid);
     if (req.session.qid === undefined || req.session.qid === null) {
         res.send({ err: "unAuth" });
-        res.end();
+        return;
     }
     const user = await User_1.default.findById(req.session.qid);
     if (!user) {
-        res.end({ err: "unAuth" });
+        res.send({ err: "unAuth" });
+        return;
     }
-    console.log("user ", user);
-    res.json({ user });
+    res.send({ user });
 });
 route.get("/logout", (req, res) => {
+    for (var prop in req.cookies) {
+        if (!req.cookies.hasOwnProperty(prop)) {
+            continue;
+        }
+        res.cookie(prop, "", { expires: new Date(0) });
+    }
     req.session.destroy((err) => {
         if (err) {
-            console.log(err);
-            res.send(false);
+            res.status(404).json({
+                errors: ["canr destroy session", "user not found with session id", err],
+            });
+            return;
         }
-        res.clearCookie();
-        res.send(true);
+        res.end(true);
     });
+    res.end(false);
 });
 exports.default = route;
 //# sourceMappingURL=userRoute.js.map
