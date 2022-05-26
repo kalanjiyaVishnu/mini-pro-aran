@@ -55,7 +55,7 @@ export default function Product({ product }: { product: any }) {
             </button>
             <Link href={'product/' + product._id}>
               <button className="block rounded-lg bg-sec-color-dark-1 py-2 px-6 text-lg font-semibold text-green-100 shadow transition duration-300 hover:text-white hover:shadow-md">
-                Buy
+                View
               </button>
             </Link>
           </div>

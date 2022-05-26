@@ -2,6 +2,7 @@ import Axios from 'axios'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Modals from '../../components/Modals'
+import useUser from '../../utils/use-user'
 
 /* This example requires Tailwind CSS v2.0+ */
 const features = [
@@ -21,6 +22,7 @@ const features = [
   },
 ]
 interface IProduct {
+  id: string
   name: { type: String; required: true; trim: true }
   price: Number
   desc: string
@@ -35,6 +37,8 @@ export default function Example() {
   const { id } = router.query
   console.log('id is ', id)
   const [product, setProduct] = useState<IProduct>()
+  const [user, logged, err] = useUser()
+
   useEffect(() => {
     if (id)
       Axios.get(`http://localhost:4000/api/products/` + id?.toString()).then(
@@ -46,6 +50,7 @@ export default function Example() {
         }
       )
   }, [id])
+  console.log('user ', user)
 
   return (
     <div className="mx-auto grid h-full  max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
@@ -54,7 +59,20 @@ export default function Example() {
           <Modals
             body="Are you sure you want to buy the product? You have to fill the form and you are good to go."
             head={'Confirm to Buy'}
-            trigFn={() => {}}
+            disable={!logged}
+            trigFn={() => {
+              Axios.post('http://localhost:4000/api/products/addToCart', {
+                pid: id,
+                uid: user._id,
+              }).then((res) => {
+                if (res.data.err) {
+                  console.log(res.data.err)
+                  return
+                }
+                router.push('/cart')
+                console.log(res.data)
+              })
+            }}
           />
         )}
         <div className="flex w-full ">

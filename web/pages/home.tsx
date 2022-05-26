@@ -1,8 +1,6 @@
 import Axios from 'axios'
-import Link from 'next/link'
+
 import { useEffect, useState } from 'react'
-import ContactForm from '../components/ContactForm'
-import Modals from '../components/Modals'
 import Product from '../components/Product'
 
 const Home = () => {

@@ -3,6 +3,7 @@ import { Popover, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
 import Axios from 'axios'
+import useUser from '../utils/use-user'
 
 const navigation = [
   { name: 'Features', href: '/Features' },
@@ -11,99 +12,10 @@ const navigation = [
   { name: 'Cart', href: '/cart' },
 ]
 const Nav: React.FC = () => {
-  const [user, setUser] = useState({
-    name: '',
-  })
+  const [user, logged, err] = useUser()
 
-  const [logged, setLogged] = useState<Boolean>()
-  useEffect(() => {
-    Axios.get('http://localhost:4000/api/user/me').then((res) => {
-      console.log('user init ', res.data)
-      if (!res) {
-        console.log('Server down')
-      }
-      if (res.data.err) {
-        setLogged(false)
-        return
-      } else setLogged(true)
-      setUser(res.data.user)
-      console.log(logged)
-    })
-  }, [])
   return (
     <>
-      {/* <header className="absolute top-0 z-50 flex w-screen items-center justify-between border-b bg-primary-bg-color  font-sans  shadow-sm">
-        <nav className="relative  mx-auto flex w-full max-w-screen-2xl items-center justify-between px-4 py-4 text-sm">
-          <Link href={'/'}>
-            <div className="flex h-10 cursor-pointer items-center   text-center font-cur text-2xl text-warmGray-900 text-opacity-80 drop-shadow-sm">
-              Aran windows
-            </div>
-          </Link>
-
-          <div className="flex">
-            <ul className="flex">
-              <li className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:text-sec-color-dark-1">
-                <Link href={'/login'}>login</Link>
-              </li>
-              <li className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:text-sec-color-dark-1">
-                <Link href={'/register'}>register</Link>
-              </li>
-              <li className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:text-sec-color-dark-1">
-                <Link href={'/home'}>home</Link>
-              </li>{' '}
-              <li className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:text-sec-color-dark-1">
-                <Link href={'/login'}>
-                  <span
-                    className="cursor-pointer"
-                    onClick={() => {
-                      Axios.get('http://localhost:4000/api/user/logout')
-                    }}
-                  >
-                    logout
-                  </span>
-                </Link>
-              </li>
-              <li className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:text-sec-color-dark-1">
-                <Link href={'/about'}>about</Link>
-              </li>
-            </ul>
-            <div className="flex">
-              <div className="mr-6 transform font-bold uppercase text-primary-bg-color-2 opacity-80 transition-all duration-300 hover:scale-110 hover:text-sec-color-dark-1">
-                <Link href={'/profile'}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </Link>
-              </div>
-              <div className="sm:block  lg:hidden">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
-        </nav>
-      </header> */}
       <Popover>
         <div className="absolute top-0 z-50 w-screen items-center justify-between border-b bg-primary-bg-color py-4    shadow-sm">
           <nav
