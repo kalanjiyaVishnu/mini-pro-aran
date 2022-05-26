@@ -5,6 +5,15 @@ const userSchema = new mongoose_1.Schema({
     nameOrEmail: { type: String, required: true },
     pass: { type: String, required: true },
     avatar: String,
+    cart: {
+        type: [
+            {
+                type: mongoose_1.Schema.Types.ObjectId,
+                ref: "Product",
+            },
+        ],
+        default: [],
+    },
 });
 const User = (0, mongoose_1.model)("User", userSchema);
 exports.default = User;

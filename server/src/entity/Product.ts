@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose"
 
-interface IProduct {
+export interface IProduct {
   name: { type: String; required: true; trim: true }
   price: Number
   desc: string
