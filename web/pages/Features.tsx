@@ -1,7 +1,7 @@
 const Features = () => {
   return (
     <div className="">
-      <h2>upcomming features and updates</h2>
+      <h2>upcomming features and updates adsfdsaf sadfdsaf sdaf sadfdsaf</h2>
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Product from '../components/Product'
 import useUser from '../utils/use-user'
@@ -28,10 +29,19 @@ const cart = () => {
     return <p>login first</p>
   } else
     return (
-      <div className="">
-        {products.map((product) => {
-          return <Product product={product} key={product.id} />
-        })}
+      <div>
+        <Link href={'/BuyProduct'}>
+          <button className="block rounded-lg bg-sec-color-dark-1 py-2 px-6 text-lg font-semibold text-green-100 shadow transition duration-300 hover:text-white hover:shadow-md">
+            Proceed to Buy : {products && products.length}
+          </button>
+        </Link>
+        <br />
+
+        <div className="flex  flex-wrap">
+          {products.map((product) => {
+            return <Product product={product} key={product.id} />
+          })}
+        </div>
       </div>
     )
 }

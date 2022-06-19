@@ -10,6 +10,7 @@ const navigation = [
   { name: 'Marketplace', href: '/home' },
   { name: 'Company', href: '/about' },
   { name: 'Cart', href: '/cart' },
+  { name: 'One', href: '/one' },
 ]
 const Nav: React.FC = () => {
   const [user, logged, err] = useUser()

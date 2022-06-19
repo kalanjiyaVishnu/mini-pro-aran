@@ -24,6 +24,7 @@ const Home = () => {
         {products.map((product: any, index) => {
           return <Product product={product} />
         })}
+        
       </div>
     </>
   )

@@ -67,10 +67,11 @@ const Home: NextPage = () => {
           className="m-auto max-w-xs md:max-w-sm"
         /> */}
         </div>
+        
       </main>
-      {/* <div className="h-screen bg-red-400">
-        sdf
-      </div> */}
+      <div className="">
+        dasfadsf asdfnjadsnlfnj
+      </div>
     </>
   )
 }
