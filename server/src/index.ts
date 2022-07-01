@@ -12,8 +12,8 @@ const main = async () => {
     // mongodb://localhost:27017/test -> local mongo conection
     // "mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority"  -> replace with your connection string
     await connect(
-      "mongodb://localhost:27017/test"
-      // "mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority"
+      // "mongodb://localhost:27017/test"
+      "mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority"
     )
   } catch (err) {
     console.log("Connection error->", err)

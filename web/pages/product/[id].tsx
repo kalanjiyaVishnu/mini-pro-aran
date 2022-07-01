@@ -3,6 +3,10 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import Modals from '../../components/Modals'
 import useUser from '../../utils/use-user'
+import { Fragment } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { XIcon } from '@heroicons/react/outline'
+import Product from '../../components/Product'
 
 /* This example requires Tailwind CSS v2.0+ */
 const features = [
@@ -33,11 +37,14 @@ interface IProduct {
 }
 export default function Example() {
   const [isOpen, setIsOpen] = useState(false)
+  const [open, setOpen] = useState(true)
+
   const router = useRouter()
   const { id } = router.query
   console.log('id is ', id)
   const [product, setProduct] = useState<IProduct>()
   const [user, logged, err] = useUser()
+  const [products, setProducts] = useState<any[]>([])
 
   useEffect(() => {
     if (id)
@@ -49,9 +56,40 @@ export default function Example() {
           }
         }
       )
-  }, [id])
+    if (user) {
+      user.cart.map((pid) => {
+        Axios.get(`http://localhost:4000/api/products/` + pid?.toString()).then(
+          (res) => {
+            if (res.data) {
+              setProducts((oldState) => {
+                return [...oldState, res.data]
+              })
+              console.log(res.data)
+            }
+          }
+        )
+      })
+    }
+  }, [id, user])
   console.log('user ', user)
-
+  const getSum = () => {
+    let sum: number = 0
+    products!.forEach((p) => {
+      sum += p.price
+    })
+    return sum
+  }
+  const refetch = () => {
+    user!.cart!.map((pid) => {
+      Axios.get(`http://localhost:4000/api/products/` + pid?.toString()).then(
+        (res) => {
+          if (res.data) {
+            setProducts((old) => res.data)
+          }
+        }
+      )
+    })
+  }
   return (
     <div className="mx-auto grid h-full  max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
       <div>
@@ -69,7 +107,9 @@ export default function Example() {
                   console.log(res.data.err)
                   return
                 }
-                router.push('/cart')
+                // refetch()
+                setOpen(true)
+                // router.push('/cart')
                 console.log(res.data)
               })
             }}
@@ -116,6 +156,264 @@ export default function Example() {
             )
           })}
       </div>
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-in-out duration-500"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in-out duration-500"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                      <div className="flex-1 overflow-y-auto py-6 px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-lg font-medium text-gray-900">
+                            {' '}
+                            Shopping cart{' '}
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                              onClick={() => setOpen(false)}
+                            >
+                              <span className="sr-only">Close panel</span>
+                              <XIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="mt-8">
+                          <div className="flow-root">
+                            <ul
+                              role="list"
+                              className="-my-6 divide-y divide-gray-200"
+                            >
+                              {products.map((product) => (
+                                <li key={product.id} className="flex py-6">
+                                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                    <img
+                                      src={product.thumb}
+                                      alt={product.imageAlt}
+                                      className="h-full w-full object-cover object-center"
+                                    />
+                                  </div>
+
+                                  <div className="ml-4 flex flex-1 flex-col">
+                                    <div>
+                                      <div className="flex justify-between text-base font-medium text-gray-900">
+                                        <h3>
+                                          <a href={product.href}>
+                                            {' '}
+                                            {product.name}{' '}
+                                          </a>
+                                        </h3>
+                                        <p className="ml-4">{product.price}</p>
+                                      </div>
+                                      <p className="mt-1 text-sm text-gray-500">
+                                        {product.color}
+                                      </p>
+                                    </div>
+                                    <div className="flex flex-1 items-end justify-between text-sm">
+                                      <p className="text-gray-500">
+                                        Qty {product.quantity}
+                                      </p>
+
+                                      <div className="flex">
+                                        <button
+                                          type="button"
+                                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                                          onClick={() => {
+                                            Axios.post(
+                                              'http://localhost:4000/api/products/removeFromCart',
+                                              {
+                                                pid: id,
+                                                uid: user._id,
+                                              }
+                                            ).then((res) => {
+                                              if (res.data.err) {
+                                                console.log(res.data.err)
+                                                return
+                                              }
+                                              refetch()
+                                              // setOpen(true)
+                                              // router.push('/cart')
+                                              console.log(res.data)
+                                            })
+                                          }}
+                                        >
+                                          Remove
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-gray-200 py-6 px-4 sm:px-6">
+                        <div className="flex justify-between text-base font-medium text-gray-900">
+                          <p>Subtotal</p>
+                          <p>{getSum()}</p>
+                        </div>
+                        <p className="mt-0.5 text-sm text-gray-500">
+                          Shipping and taxes calculated at checkout.
+                        </p>
+                        <div className="mt-6">
+                          <a
+                            href="#"
+                            className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                            onClick={() => {
+                              Axios.post(
+                                'http://localhost:4000/api/products/checkout',
+                                {
+                                  uid: user._id,
+                                }
+                              ).then((res) => {
+                                if (res.data.err) {
+                                  console.log(res.data.err)
+                                  return
+                                }
+                                // refetch()
+                                // setOpen(true)
+                                // router.push('/cart')
+                                console.log(res.data)
+                              })
+                              alert('mail sent checkout')
+                            }}
+                          >
+                            Checkout
+                          </a>
+                        </div>
+                        <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+                          <p>
+                            or{' '}
+                            <button
+                              type="button"
+                              className="font-medium text-indigo-600 hover:text-indigo-500"
+                              onClick={() => setOpen(false)}
+                            >
+                              Continue Shopping
+                              <span aria-hidden="true"> &rarr;</span>
+                            </button>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+      {false && (
+        <Transition.Root show={open} as={Fragment}>
+          <Dialog as="div" className="relative z-50" onClose={setOpen}>
+            <Transition.Child
+              as={Fragment}
+              enter="ease-in-out duration-500"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="ease-in-out duration-500"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </Transition.Child>
+
+            <div className="fixed inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="transform transition ease-in-out duration-500 sm:duration-700"
+                    enterFrom="translate-x-full"
+                    enterTo="translate-x-0"
+                    leave="transform transition ease-in-out duration-500 sm:duration-700"
+                    leaveFrom="translate-x-0"
+                    leaveTo="translate-x-full"
+                  >
+                    <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-in-out duration-500"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in-out duration-500"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <div className="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 sm:-ml-10 sm:pr-4">
+                          <button
+                            type="button"
+                            className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            onClick={() => setOpen(false)}
+                          >
+                            <span className="sr-only">Close panel</span>
+                            <XIcon className="h-6 w-6" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </Transition.Child>
+                      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                        <div className="px-4 sm:px-6">
+                          <Dialog.Title className="text-lg font-medium text-gray-900">
+                            {' '}
+                            Cart{' '}
+                          </Dialog.Title>
+                        </div>
+                        <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                          {/* Replace with your content */}
+                          {/* <div className="absolute inset-0 px-4 sm:px-6">
+                          <div
+                            className="h-full border-2 border-dashed border-gray-200"
+                            aria-hidden="true"
+                          />
+                        </div> */}
+                          {/* /End replace */}
+                          <div className="flex  flex-wrap">
+                            {products.map((product) => {
+                              return (
+                                <Product
+                                  product={product}
+                                  key={product.id}
+                                  extra={true}
+                                />
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </div>
+          </Dialog>
+        </Transition.Root>
+      )}
     </div>
   )
 }

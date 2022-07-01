@@ -1,7 +1,13 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function Product({ product }: { product: any }) {
+export default function Product({
+  product,
+  extra,
+}: {
+  product: any
+  extra?: boolean
+}) {
   const [thumb, setThumb] = useState(product.thumb)
   return (
     <div className="ml-8 mb-8 flex">

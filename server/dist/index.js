@@ -14,7 +14,7 @@ const productRoutes_1 = __importDefault(require("./routes/productRoutes"));
 const main = async () => {
     const app = (0, express_1.default)();
     try {
-        await (0, mongoose_1.connect)("mongodb://localhost:27017/test");
+        await (0, mongoose_1.connect)("mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority");
     }
     catch (err) {
         console.log("Connection error->", err);

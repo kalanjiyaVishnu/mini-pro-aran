@@ -48,12 +48,25 @@ const Nav: React.FC = () => {
                   {item.name}
                 </a>
               ))}
-              <a
-                href="/login"
-                className="font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                Log in
-              </a>
+
+              {logged ? (
+                <Link href={'/profile'}>
+                  <div className="inline-block h-8  w-8 cursor-pointer justify-center align-middle shadow-sm">
+                    <img
+                      className="h-fulls w-full rounded-full object-cover  ring-2 ring-zinc-300 "
+                      src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                      alt=""
+                    />
+                  </div>
+                </Link>
+              ) : (
+                <a
+                  href="/login"
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                >
+                  Log in
+                </a>
+              )}
               {/* {logged ? (
                 <a
                   href="/login"

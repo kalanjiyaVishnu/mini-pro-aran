@@ -18,7 +18,7 @@ const productSchema = new Schema<IProduct>(
     desc: { type: String },
     size: { type: [String], default: [] },
     images: { type: [String], default: [] },
-    category: { type: [String], default: [] },
+    category: [String],
   },
   {
     timestamps: true,
