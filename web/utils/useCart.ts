@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import useUser from './use-user'
+import useUser from './useFetch'
 
 const useFav = () => {
   

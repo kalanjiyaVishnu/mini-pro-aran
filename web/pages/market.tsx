@@ -2,28 +2,30 @@ import Axios from 'axios'
 
 import { useEffect, useState } from 'react'
 import Product from '../components/Product'
+import { useFetch } from '../utils/useFetch'
 type ProductSectionProps = {
   type: string
 }
 const ProductSection: React.FC<ProductSectionProps> = ({ type }) => {
-  const [products, setProducts] = useState([])
+  const [products, loading, err] = useFetch(
+    `http://localhost:4000/api/products/cat/${type}`
+  )
 
-  useEffect(() => {
-    Axios.get(`http://localhost:4000/api/products/cat/${type}`).then((res) => {
-      console.log('products  ', res.data)
-      if (res.data) {
-        setProducts(res.data)
-      }
-    })
-  }, [])
+  if (loading) {
+    return null
+  }
+
+  if (!loading && err) {
+    return <div>{err}</div>
+  }
   return (
     <>
       <h2 className="mb-4 text-3xl font-extrabold tracking-tight text-gray-900 opacity-90 sm:text-4xl">
-        {type} :]
+        {type}
       </h2>
-      <div className="flex h-auto flex-wrap">
-        {products.map((product: any, index) => {
-          return <Product product={product} />
+      <div className="flex h-auto w-full flex-wrap">
+        {products!.map((product: any) => {
+          return <Product product={product} key={product.id} />
         })}
       </div>
     </>

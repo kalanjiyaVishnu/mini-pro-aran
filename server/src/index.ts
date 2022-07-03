@@ -9,8 +9,6 @@ import productRoute from "./routes/productRoutes"
 const main = async () => {
   const app = express()
   try {
-    // mongodb://localhost:27017/test -> local mongo conection
-    // "mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority"  -> replace with your connection string
     await connect(
       // "mongodb://localhost:27017/test"
       "mongodb+srv://root:root@cluster0.pn567.mongodb.net/?retryWrites=true&w=majority"
@@ -37,7 +35,7 @@ const main = async () => {
     session({
       name: "qid",
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24 * 1000,
       },
       secret: "soemtiosdfads",
       saveUninitialized: false,
@@ -52,7 +50,7 @@ const main = async () => {
   })
 
   app.listen(4000, () => {
-    console.log("up and running")
+    console.log("up and running: http://localhost:4000")
   })
 }
 main()

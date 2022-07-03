@@ -1,19 +1,18 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useContext } from 'react'
 import { Popover, Transition } from '@headlessui/react'
 import { MenuIcon, XIcon } from '@heroicons/react/outline'
 import Link from 'next/link'
-import Axios from 'axios'
-import useUser from '../utils/use-user'
+import { UserContext } from '../hooks/UserContext'
 
 const navigation = [
   { name: 'Features', href: '/Features' },
-  { name: 'Marketplace', href: '/home' },
+  { name: 'Marketplace', href: '/market' },
   { name: 'Company', href: '/about' },
   { name: 'Cart', href: '/cart' },
   { name: 'One', href: '/one' },
 ]
 const Nav: React.FC = () => {
-  const [user, logged, err] = useUser()
+  const { user, logged, err } = useContext(UserContext)
 
   return (
     <>
@@ -114,9 +113,9 @@ const Nav: React.FC = () => {
                 </div>
                 <div className="-mr-2">
                   <Popover.Button className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-                    <span className="sr-only">Close main menu</span>
                     <XIcon className="h-6 w-6" aria-hidden="true" />
                   </Popover.Button>
+                  <span className="sr-only">Close main menu</span>
                 </div>
               </div>
               <div className="space-y-1 px-2 pt-2 pb-3">

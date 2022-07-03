@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer"
 
 // async..await is not allowed in global scope, must use a wrapper
-export default async function sendMail(to: string, content:string) {
+export default async function sendMail(to: string, content: string) {
   // Generate test SMTP service account from ethereal.email
   // Only needed if you don't have a real mail account for testing
   //   let testAccount = await nodemailer.createTestAccount()
@@ -25,7 +25,20 @@ export default async function sendMail(to: string, content:string) {
     to,
     subject: "Hello ✔",
     text: "Hello world?",
-    html: `<b>${"adsf"}</b>`,
+    html: `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+    </head>
+    <body>
+      <h1>Hey ${to}</h1>
+      ${content}
+      <p>Out Team will get back to you soon</p>
+    </body>
+    </html>`,
   })
 
   console.log("Message sent: %s", info.messageId)

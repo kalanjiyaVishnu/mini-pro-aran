@@ -1,7 +1,7 @@
 import React from 'react'
 import Nav from './Nav'
 type propType = {
-  children: JSX.Element
+  children: any
 }
 const Layout: React.FC<propType> = ({ children }) => {
   return (

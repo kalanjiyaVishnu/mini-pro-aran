@@ -1,15 +1,19 @@
 import '../styles/globals.css'
-import { AppProps } from 'next/app'
 import Layout from '../components/Layout'
 import Axios from 'axios'
+import { AppProps } from 'next/app'
+import UserProvider from '../hooks/UserContext'
 
 Axios.defaults.withCredentials = true
-function app({ Component, pageProps }: AppProps) {
+type Props = AppProps & {
+  Component: any
+}
+export default ({ Component, pageProps }: Props) => {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <UserProvider>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </UserProvider>
   )
 }
-
-export default app

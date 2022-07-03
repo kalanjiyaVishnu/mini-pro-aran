@@ -2,7 +2,7 @@ import Axios from 'axios'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Product from '../components/Product'
-import useUser from '../utils/use-user'
+import useUser from '../utils/useFetch'
 
 const cart = () => {
   const [user, logged, err] = useUser()

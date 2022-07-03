@@ -19,7 +19,20 @@ async function sendMail(to, content) {
         to,
         subject: "Hello ✔",
         text: "Hello world?",
-        html: `<b>${"adsf"}</b>`,
+        html: `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+    </head>
+    <body>
+      <h1>Hey ${to}</h1>
+      ${content}
+      <p>Out Team will get back to you soon</p>
+    </body>
+    </html>`,
     });
     console.log("Message sent: %s", info.messageId);
     console.log("Preview URL: %s", nodemailer_1.default.getTestMessageUrl(info));

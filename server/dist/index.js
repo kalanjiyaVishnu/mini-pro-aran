@@ -31,7 +31,7 @@ const main = async () => {
     app.use((0, express_session_1.default)({
         name: "qid",
         cookie: {
-            maxAge: 1000 * 60 * 60 * 24,
+            maxAge: 1000 * 60 * 60 * 24 * 1000,
         },
         secret: "soemtiosdfads",
         saveUninitialized: false,
@@ -44,7 +44,7 @@ const main = async () => {
         res.send("bob");
     });
     app.listen(4000, () => {
-        console.log("up and running");
+        console.log("up and running: http://localhost:4000");
     });
 };
 main();

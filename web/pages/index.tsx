@@ -1,10 +1,6 @@
-import Axios from 'axios'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
 
 const Home: NextPage = () => {
-  
-
   return (
     <>
       <div className="absolute top-0 left-0 bottom-0 right-0 z-0 h-screen w-screen  opacity-80 ">
@@ -67,11 +63,7 @@ const Home: NextPage = () => {
           className="m-auto max-w-xs md:max-w-sm"
         /> */}
         </div>
-        
       </main>
-      <div className="">
-        dasfadsf asdfnjadsnlfnj
-      </div>
     </>
   )
 }

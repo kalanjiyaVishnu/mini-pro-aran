@@ -26,6 +26,7 @@
     "mongoose": "^6.3.3",
     "nodemailer": "^6.7.6",
     "nodemon": "^2.0.15",
+    "stripe": "^9.11.0",
     "typescript": "^4.6.4",
     "uuid": "^8.3.2",
     "yarn": "^1.22.19"

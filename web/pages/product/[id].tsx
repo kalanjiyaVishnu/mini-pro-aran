@@ -1,14 +1,13 @@
 import Axios from 'axios'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import Modals from '../../components/Modals'
-import useUser from '../../utils/use-user'
+
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XIcon } from '@heroicons/react/outline'
-import Product from '../../components/Product'
+import { UserContext } from '../../hooks/UserContext'
 
-/* This example requires Tailwind CSS v2.0+ */
 const features = [
   { name: 'Origin', description: 'Designed by Good Goods, Inc.' },
   {
@@ -37,59 +36,38 @@ interface IProduct {
 }
 export default function Example() {
   const [isOpen, setIsOpen] = useState(false)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
 
   const router = useRouter()
-  const { id } = router.query
-  console.log('id is ', id)
   const [product, setProduct] = useState<IProduct>()
-  const [user, logged, err] = useUser()
-  const [products, setProducts] = useState<any[]>([])
 
+  const { user, logged, err, cart, addToCart, removeFromCart } =
+    useContext(UserContext)
+  const [products, setProducts] = useState<any[]>([])
+  const pid = router.query.id
   useEffect(() => {
-    if (id)
-      Axios.get(`http://localhost:4000/api/products/` + id?.toString()).then(
+    if (pid)
+      Axios.get(`http://localhost:4000/api/products/` + pid.toString()).then(
         (res) => {
           if (res.data) {
             setProduct(res.data)
-            console.log(res.data)
           }
         }
       )
-    if (user) {
-      user.cart.map((pid) => {
-        Axios.get(`http://localhost:4000/api/products/` + pid?.toString()).then(
-          (res) => {
-            if (res.data) {
-              setProducts((oldState) => {
-                return [...oldState, res.data]
-              })
-              console.log(res.data)
-            }
-          }
-        )
-      })
+
+    if (cart) {
+      console.log(cart)
     }
-  }, [id, user])
-  console.log('user ', user)
+  }, [pid])
+
   const getSum = () => {
     let sum: number = 0
-    products!.forEach((p) => {
+    cart!.forEach((p) => {
       sum += p.price
     })
     return sum
   }
-  const refetch = () => {
-    user!.cart!.map((pid) => {
-      Axios.get(`http://localhost:4000/api/products/` + pid?.toString()).then(
-        (res) => {
-          if (res.data) {
-            setProducts((old) => res.data)
-          }
-        }
-      )
-    })
-  }
+
   return (
     <div className="mx-auto grid h-full  max-w-2xl grid-cols-1 items-center gap-y-16 gap-x-8 py-24 px-4 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
       <div>
@@ -99,15 +77,15 @@ export default function Example() {
             head={'Confirm to Buy'}
             disable={!logged}
             trigFn={() => {
+              addToCart(product)
               Axios.post('http://localhost:4000/api/products/addToCart', {
-                pid: id,
+                pid: pid,
                 uid: user._id,
               }).then((res) => {
                 if (res.data.err) {
                   console.log(res.data.err)
                   return
                 }
-                // refetch()
                 setOpen(true)
                 // router.push('/cart')
                 console.log(res.data)
@@ -124,6 +102,12 @@ export default function Example() {
             onClick={() => setIsOpen(!isOpen)}
           >
             Buy
+          </button>
+          <button
+            className="ml-8 block rounded-lg bg-sec-color-dark-1 py-2 px-6 text-lg font-semibold text-green-100 shadow transition duration-300 hover:text-white hover:shadow-md"
+            onClick={() => setOpen(!open)}
+          >
+            Cart
           </button>
         </div>
 
@@ -152,6 +136,7 @@ export default function Example() {
                 src={img}
                 alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
                 className="h-52 rounded-lg border-b bg-gray-100 shadow-md"
+                key={img}
               />
             )
           })}
@@ -208,7 +193,7 @@ export default function Example() {
                               role="list"
                               className="-my-6 divide-y divide-gray-200"
                             >
-                              {products.map((product) => (
+                              {cart.map((product) => (
                                 <li key={product.id} className="flex py-6">
                                   <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                     <img
@@ -243,22 +228,8 @@ export default function Example() {
                                           type="button"
                                           className="font-medium text-indigo-600 hover:text-indigo-500"
                                           onClick={() => {
-                                            Axios.post(
-                                              'http://localhost:4000/api/products/removeFromCart',
-                                              {
-                                                pid: id,
-                                                uid: user._id,
-                                              }
-                                            ).then((res) => {
-                                              if (res.data.err) {
-                                                console.log(res.data.err)
-                                                return
-                                              }
-                                              refetch()
-                                              // setOpen(true)
-                                              // router.push('/cart')
-                                              console.log(res.data)
-                                            })
+                                            removeFromCart(pid)
+                                            setOpen(false)
                                           }}
                                         >
                                           Remove
@@ -301,6 +272,7 @@ export default function Example() {
                                 // router.push('/cart')
                                 console.log(res.data)
                               })
+                              
                               alert('mail sent checkout')
                             }}
                           >
@@ -329,91 +301,6 @@ export default function Example() {
           </div>
         </Dialog>
       </Transition.Root>
-      {false && (
-        <Transition.Root show={open} as={Fragment}>
-          <Dialog as="div" className="relative z-50" onClose={setOpen}>
-            <Transition.Child
-              as={Fragment}
-              enter="ease-in-out duration-500"
-              enterFrom="opacity-0"
-              enterTo="opacity-100"
-              leave="ease-in-out duration-500"
-              leaveFrom="opacity-100"
-              leaveTo="opacity-0"
-            >
-              <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-            </Transition.Child>
-
-            <div className="fixed inset-0 overflow-hidden">
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="transform transition ease-in-out duration-500 sm:duration-700"
-                    enterFrom="translate-x-full"
-                    enterTo="translate-x-0"
-                    leave="transform transition ease-in-out duration-500 sm:duration-700"
-                    leaveFrom="translate-x-0"
-                    leaveTo="translate-x-full"
-                  >
-                    <Dialog.Panel className="pointer-events-auto relative w-screen max-w-md">
-                      <Transition.Child
-                        as={Fragment}
-                        enter="ease-in-out duration-500"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="ease-in-out duration-500"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                      >
-                        <div className="absolute top-0 left-0 -ml-8 flex pt-4 pr-2 sm:-ml-10 sm:pr-4">
-                          <button
-                            type="button"
-                            className="rounded-md text-gray-300 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                            onClick={() => setOpen(false)}
-                          >
-                            <span className="sr-only">Close panel</span>
-                            <XIcon className="h-6 w-6" aria-hidden="true" />
-                          </button>
-                        </div>
-                      </Transition.Child>
-                      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                        <div className="px-4 sm:px-6">
-                          <Dialog.Title className="text-lg font-medium text-gray-900">
-                            {' '}
-                            Cart{' '}
-                          </Dialog.Title>
-                        </div>
-                        <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                          {/* Replace with your content */}
-                          {/* <div className="absolute inset-0 px-4 sm:px-6">
-                          <div
-                            className="h-full border-2 border-dashed border-gray-200"
-                            aria-hidden="true"
-                          />
-                        </div> */}
-                          {/* /End replace */}
-                          <div className="flex  flex-wrap">
-                            {products.map((product) => {
-                              return (
-                                <Product
-                                  product={product}
-                                  key={product.id}
-                                  extra={true}
-                                />
-                              )
-                            })}
-                          </div>
-                        </div>
-                      </div>
-                    </Dialog.Panel>
-                  </Transition.Child>
-                </div>
-              </div>
-            </div>
-          </Dialog>
-        </Transition.Root>
-      )}
     </div>
   )
 }
